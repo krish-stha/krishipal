@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        // Cart Button
+
         GestureDetector(
           onTap: () {},
           child: Container(
@@ -107,7 +107,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // ⭐ Recommended Section (Compact, with Add to Cart button)
   Widget _buildRecommendedSection(ThemeData theme) {
     final recommendedProducts = [
       {
