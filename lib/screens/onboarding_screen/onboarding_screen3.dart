@@ -27,7 +27,6 @@ class OnboardingScreen3 extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // ---------- IMAGE SECTION WITH 3D CARD ----------
           Expanded(
             flex: 4,
             child: Padding(
