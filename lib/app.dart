@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:krishipal/screens/splash_screen.dart';
+import 'theme data/theme_data.dart';
+import 'screens/splash_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -7,8 +8,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Wheels',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: getApplicationTheme(),
       home: const SplashScreen(),
     );
   }
