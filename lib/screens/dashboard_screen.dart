@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:krishipal/screens/buttom%20navigation%20screen/account_screen.dart';
+import 'package:krishipal/screens/buttom%20navigation%20screen/blog_screen.dart';
+import 'package:krishipal/screens/buttom%20navigation%20screen/home_screen.dart';
+import 'package:krishipal/screens/buttom%20navigation%20screen/shop_screen.dart';
 import 'package:krishipal/screens/login_screen.dart';
-import 'buttom navigation screen/home_screen.dart';
-import 'buttom navigation screen/shop_screen.dart';
-import 'buttom navigation screen/blog_screen.dart';
-import 'buttom navigation screen/account_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,76 +14,75 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
+  int cartCount = 2;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const ShopScreen(),
-    const BlogScreen(),
-    const AccountScreen(),
+  final screens = const [
+    HomeScreen(),
+    ShopScreen(),
+    BlogScreen(),
+    AccountScreen(),
   ];
 
-  void _logout(BuildContext context) {
+  void _logout() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _currentIndex == 0
-              ? "Home"
-              : _currentIndex == 1
-              ? "Shop"
-              : _currentIndex == 2
-              ? "Blogs"
-              : "Profile",
-        ),
-        backgroundColor: const Color(0xFF0B7A32),
+        title: const Text('KrishiPal'),
         actions: _currentIndex == 3
-            ? [
+            ? [IconButton(icon: const Icon(Icons.logout), onPressed: _logout)]
+            : [
                 IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () => _logout(context),
+                  icon: const Icon(Icons.notifications_none),
+                  onPressed: () {},
                 ),
-              ]
-            : null,
+                Stack(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                      onPressed: () {},
+                    ),
+                    if (cartCount > 0)
+                      Positioned(
+                        right: 6,
+                        top: 6,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '$cartCount',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
       ),
-      body: _screens[_currentIndex],
+      body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF0B7A32),
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        onTap: (i) => setState(() => _currentIndex = i),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shop_2_outlined),
-            activeIcon: Icon(Icons.shop),
-            label: 'Shop',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book_online_outlined),
-            activeIcon: Icon(Icons.book),
-            label: 'Blogs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Shop'),
+          BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Blogs'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
