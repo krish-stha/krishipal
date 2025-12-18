@@ -19,7 +19,7 @@ ThemeData getApplicationTheme() {
     appBarTheme: getAppBarTheme(),
     bottomNavigationBarTheme: getBottomNavigationTheme(),
     elevatedButtonTheme: getElevatedButtonTheme(),
-    inputDecorationTheme: getInputDecorationTheme(), // 👈 add this
+    inputDecorationTheme: getInputDecorationTheme(),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(foregroundColor: primaryColor),
     ),
