@@ -8,30 +8,10 @@ class MyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color themeColor = Color(0xFF3E8B3A);
-
-    return SizedBox(
-      width: double.infinity, // full width button
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: themeColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 2,
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
+    return ElevatedButton(
+      style: Theme.of(context).elevatedButtonTheme.style,
+      onPressed: onPressed,
+      child: Text(text),
     );
   }
 }

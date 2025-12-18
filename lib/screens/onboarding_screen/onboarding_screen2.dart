@@ -9,133 +9,137 @@ class OnboardingScreen2 extends StatelessWidget {
   void _goToNext(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) {
-          return const OnboardingScreen3();
-        },
-      ),
+      MaterialPageRoute(builder: (context) => const OnboardingScreen3()),
     );
   }
 
   void _skipToLogin(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) {
-          return const LoginScreen();
-        },
-      ),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          child: Column(
-            children: [
-              const Spacer(flex: 1),
+      backgroundColor: const Color(0xffF5F7F5),
 
-              Expanded(
-                flex: 3,
+      // White safe area for top system bar
+      extendBodyBehindAppBar: true,
+
+      body: Column(
+        children: [
+          Container(
+            color: Colors.white,
+            height: MediaQuery.of(context).padding.top,
+          ),
+
+          const SizedBox(height: 10),
+
+          // ---------- IMAGE SECTION WITH 3D CARD ----------
+          Expanded(
+            flex: 4,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
                 child: Center(
                   child: Image.asset(
-                    "assets/images/plant.png", // Change image accordingly
-                    width: MediaQuery.of(context).size.width * 0.8,
+                    "assets/images/plant.png",
+                    width: MediaQuery.of(context).size.width * 0.75,
                     fit: BoxFit.contain,
                   ),
                 ),
               ),
+            ),
+          ),
 
-              const Spacer(flex: 1),
+          const SizedBox(height: 25),
 
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: const Text(
-                    'High-Germination Seeds\nYou Can Trust',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF3E8B3A),
-                      height: 1.3,
-                    ),
+          // ---------- HEADLINE ----------
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: const [
+                Text(
+                  'High-Germination Seeds\nYou Can Trust',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF3E8B3A),
+                    height: 1.3,
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 16),
-
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: const Text(
-                    'Our seeds undergo strict quality testing.\n'
-                    'Grow healthier crops with confidence.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                      height: 1.4,
-                    ),
+                SizedBox(height: 12),
+                Text(
+                  'Our seeds undergo strict quality testing.\nGrow healthier crops with confidence.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey,
+                    height: 1.4,
                   ),
                 ),
-              ),
+              ],
+            ),
+          ),
 
-              const SizedBox(height: 24),
+          const SizedBox(height: 25),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildDot(false),
-                  const SizedBox(width: 6),
-                  _buildDot(true),
-                  const SizedBox(width: 6),
-                  _buildDot(false),
-                ],
-              ),
-
-              const Spacer(flex: 2),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: TextButton(
-                      onPressed: () => _skipToLogin(context),
-                      child: const Text(
-                        'Skip',
-                        style: TextStyle(
-                          color: Color(0xFF3E8B3A),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Flexible(
-                    child: MyButton(
-                      onPressed: () => _goToNext(context),
-                      text: 'Next',
-                    ),
-                  ),
-                ],
-              ),
+          // ---------- DOT INDICATOR ----------
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildDot(false),
+              const SizedBox(width: 6),
+              _buildDot(true),
+              const SizedBox(width: 6),
+              _buildDot(false),
             ],
           ),
-        ),
+
+          const SizedBox(height: 30),
+
+          // ---------- BUTTONS ----------
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => _skipToLogin(context),
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(color: Color(0xFF3E8B3A), fontSize: 16),
+                  ),
+                ),
+                MyButton(onPressed: () => _goToNext(context), text: 'Next'),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 
   Widget _buildDot(bool isActive) {
     return Container(
-      width: isActive ? 9 : 7,
-      height: isActive ? 9 : 7,
+      width: isActive ? 10 : 8,
+      height: isActive ? 10 : 8,
       decoration: BoxDecoration(
         color: isActive ? const Color(0xFF3E8B3A) : Colors.grey.shade300,
         shape: BoxShape.circle,
