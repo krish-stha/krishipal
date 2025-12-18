@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           elevation: 4,
                         ),
                         child: const Text(
-                          "Login",
+                          "Login ",
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
@@ -227,7 +227,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // -------------------- INPUT STYLE -----------------------
   InputDecoration _inputStyle(String hint) {
     return InputDecoration(
       hintText: hint,
