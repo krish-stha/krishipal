@@ -27,7 +27,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 🔍 Search Bar with Cart Button
   Widget _buildSearchBar(BuildContext context) {
     return Row(
       children: [
