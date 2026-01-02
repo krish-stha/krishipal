@@ -220,7 +220,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 ),
                               )
                             : const Text(
-                                "Logined",
+                                "Login",
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,
