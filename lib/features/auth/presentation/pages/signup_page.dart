@@ -166,7 +166,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
             const SizedBox(height: 30),
 
-            // Form card
             Container(
               width: double.infinity,
               margin: const EdgeInsets.symmetric(horizontal: 20),
