@@ -240,7 +240,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // City dropdown
                     DropdownButtonFormField<String>(
                       value: selectedCity,
                       decoration: inputStyle(
