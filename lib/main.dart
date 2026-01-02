@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:krishipal/app.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:krishipal/core/services/hive/hive_service.dart';
+import 'app/app.dart';
 
-void main() {
-  runApp(const App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  await HiveService().init();
+  runApp(const ProviderScope(child: Krishipal()));
 }
