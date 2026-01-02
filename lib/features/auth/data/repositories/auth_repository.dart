@@ -7,7 +7,6 @@ import 'package:krishipal/features/auth/data/models/auth_hive_model.dart';
 import 'package:krishipal/features/auth/domain/entities/auth_entity.dart';
 import 'package:krishipal/features/auth/domain/repositories/auth_repository.dart';
 
-//provider
 final authRepositoryProvider = Provider<IAuthRepository>((ref) {
   return AuthRepository(authDatasource: ref.read(authLocalDataSourceProvider));
 });

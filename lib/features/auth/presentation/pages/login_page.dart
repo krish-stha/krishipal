@@ -111,7 +111,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
             const SizedBox(height: 30),
 
-            // -------- CARD --------
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
@@ -196,7 +195,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                     const SizedBox(height: 15),
 
-                    // -------- LOGIN BUTTON --------
                     SizedBox(
                       width: double.infinity,
                       height: 48,
