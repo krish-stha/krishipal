@@ -20,18 +20,20 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       authId: fields[0] as String?,
       fullName: fields[1] as String,
       email: fields[2] as String,
-      phoneNumber: fields[3] as String?,
-      batchId: fields[4] as String?,
-      username: fields[5] as String,
-      password: fields[6] as String?,
-      profilePicture: fields[7] as String?,
+      username: fields[3] as String,
+      password: fields[4] as String?,
+      phoneNumber: fields[5] as String?,
+      address: fields[6] as String?,
+      role: fields[7] as String?,
+      profilePicture: fields[8] as String?,
+      deletedAt: fields[9] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AuthHiveModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.authId)
       ..writeByte(1)
@@ -39,15 +41,19 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       ..writeByte(2)
       ..write(obj.email)
       ..writeByte(3)
-      ..write(obj.phoneNumber)
-      ..writeByte(4)
-      ..write(obj.batchId)
-      ..writeByte(5)
       ..write(obj.username)
-      ..writeByte(6)
+      ..writeByte(4)
       ..write(obj.password)
+      ..writeByte(5)
+      ..write(obj.phoneNumber)
+      ..writeByte(6)
+      ..write(obj.address)
       ..writeByte(7)
-      ..write(obj.profilePicture);
+      ..write(obj.role)
+      ..writeByte(8)
+      ..write(obj.profilePicture)
+      ..writeByte(9)
+      ..write(obj.deletedAt);
   }
 
   @override

@@ -1,11 +1,11 @@
 class HiveTableConstant {
-  //private constructor to prevent instantiation
+  // Private constructor to prevent instantiation
   HiveTableConstant._();
 
-  //Database name
+  // Database name
   static const String dbName = 'krishipal';
 
-  //Table names: Box names in Hive
+  // Table names (Box names in Hive) and typeIds
 
   static const int batchTypeId = 0;
   static const String batchTable = 'batch_table';
@@ -13,7 +13,7 @@ class HiveTableConstant {
   static const int itemTypeId = 1;
   static const String itemTable = 'item_table';
 
-  static const int authTypeId = 2;
+  static const int authTypeId = 2; // <-- use this in AuthHiveModel
   static const String authTable = 'auth_table';
 
   static const int categoryTypeId = 3;

@@ -1,7 +1,10 @@
+// features/auth/presentation/pages/login_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:krishipal/core/utils/snack_bar_utils.dart';
 import 'package:krishipal/features/auth/presentation/pages/signup_page.dart';
+import 'package:krishipal/features/auth/presentation/providers/auth_provider.dart';
+
 import 'package:krishipal/features/auth/presentation/state/auth_state.dart';
 import 'package:krishipal/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:krishipal/features/dashboard/presentation/pages/dashboard_page.dart';
@@ -34,33 +37,38 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     setState(() => isLoading = true);
 
-    await ref
-        .read(authViewModelProvider.notifier)
-        .login(
-          email: usernameController.text.trim(),
-          password: passwordController.text.trim(),
-        );
+    try {
+      final email = usernameController.text.trim().toLowerCase();
+      final password = passwordController.text.trim();
 
-    setState(() => isLoading = false);
+      await ref
+          .read(authViewModelProvider.notifier)
+          .login(email: email, password: password);
+    } catch (e) {
+      SnackbarUtils.showError(context, 'Login failed: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
 
-    // 🔥 Listen for auth result
+    // Listen for auth result
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const DashboardPage()),
         );
-      }
-      // show error only if previous status was NOT error
-      else if (next.status == AuthStatus.error &&
+      } else if (next.status == AuthStatus.error &&
           previous?.status != AuthStatus.error) {
         if (next.errorMessage != null) {
           SnackbarUtils.showError(context, next.errorMessage!);
+          setState(() => isLoading = false);
         }
       }
     });
@@ -68,7 +76,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F1F1),
       extendBodyBehindAppBar: true,
-
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -148,13 +155,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     const SizedBox(height: 30),
 
-                    const Text("Username"),
+                    const Text("Email"),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: usernameController,
-                      validator: (v) =>
-                          v!.isEmpty ? "Username cannot be empty" : null,
-                      decoration: _inputStyle("Enter username"),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty)
+                          return "Email cannot be empty";
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v.trim()))
+                          return "Enter a valid email";
+                        return null;
+                      },
+                      decoration: _inputStyle("Enter your email"),
                     ),
 
                     const SizedBox(height: 20),
@@ -199,7 +212,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: authState.status == AuthStatus.loading
+                        onPressed:
+                            (isLoading ||
+                                authState.status == AuthStatus.loading)
                             ? null
                             : _handleLogin,
                         style: ElevatedButton.styleFrom(
@@ -208,7 +223,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: authState.status == AuthStatus.loading
+                        child:
+                            (isLoading ||
+                                authState.status == AuthStatus.loading)
                             ? const SizedBox(
                                 width: 22,
                                 height: 22,
@@ -267,6 +284,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.green, width: 1.2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.red, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.red, width: 1.2),
       ),
     );
   }

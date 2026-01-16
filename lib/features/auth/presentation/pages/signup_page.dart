@@ -1,12 +1,10 @@
+// features/auth/presentation/pages/signup_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:krishipal/features/auth/presentation/pages/login_page.dart';
-
-// Import your ViewModels and State (adjust the paths)
+import 'package:krishipal/features/auth/presentation/providers/auth_provider.dart';
 import 'package:krishipal/features/auth/presentation/state/auth_state.dart';
 import 'package:krishipal/features/auth/presentation/view_model/auth_view_model.dart';
-import 'package:krishipal/features/batch/presentation/state/batch_state.dart';
-import 'package:krishipal/features/batch/presentation/view_model/batch_viewmodel.dart';
 import 'package:krishipal/core/utils/snack_bar_utils.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -21,16 +19,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   final fullNameController = TextEditingController();
   final contactController = TextEditingController();
+  final addressController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
   bool hidePassword = true;
   bool hideConfirmPassword = true;
+  bool isSubmitting = false;
 
-  // Dropdown state
   String selectedCountryCode = '+977';
-  String? selectedCity;
 
   final countryCodes = [
     {'code': '+977', 'name': 'Nepal', 'flag': '🇳🇵'},
@@ -40,36 +38,39 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    // Fetch batches for city dropdown
-    Future.microtask(() {
-      ref.read(batchViewmodelProvider.notifier).getAllBatches();
-    });
-  }
-
-  @override
   void dispose() {
     fullNameController.dispose();
     contactController.dispose();
+    addressController.dispose();
     usernameController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void handleSignup() {
-    if (_formKey.currentState!.validate()) {
-      ref
+  Future<void> handleSignup() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => isSubmitting = true);
+
+    try {
+      final phoneNumber = contactController.text.trim().replaceAll(' ', '');
+      final email = usernameController.text.trim().toLowerCase();
+
+      await ref
           .read(authViewModelProvider.notifier)
           .register(
-            fullName: fullNameController.text,
-            email: usernameController.text.trim(),
-            username: usernameController.text.trim(),
+            fullName: fullNameController.text.trim(),
+            email: email,
+            username: email,
             password: passwordController.text,
-            phoneNumber: '$selectedCountryCode${contactController.text}',
-            batchId: selectedCity,
+            phoneNumber: phoneNumber,
+            countryCode: selectedCountryCode,
+            address: addressController.text.trim(),
           );
+    } catch (e) {
+      SnackbarUtils.showError(context, 'Registration failed');
+      setState(() => isSubmitting = false);
     }
   }
 
@@ -96,25 +97,32 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final batchState = ref.watch(batchViewmodelProvider);
     final authState = ref.watch(authViewModelProvider);
 
-    // Listen to auth state changes
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
-      if (next.status == AuthStatus.error) {
-        SnackbarUtils.showError(
-          context,
-          next.errorMessage ?? 'Registration failed',
-        );
-      } else if (next.status == AuthStatus.registered) {
+      if (next.status == AuthStatus.error &&
+          previous?.status != AuthStatus.error) {
+        SnackbarUtils.showError(context, next.errorMessage ?? 'Error');
+        setState(() => isSubmitting = false);
+      }
+
+      if (next.status == AuthStatus.registered &&
+          previous?.status != AuthStatus.registered) {
         SnackbarUtils.showSuccess(
           context,
-          next.errorMessage ?? 'Registration Successful',
+          "Registration Successful!\nYou can now login with your credentials.",
         );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginPage()),
-        );
+
+        setState(() => isSubmitting = false);
+
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginPage()),
+            );
+          }
+        });
       }
     });
 
@@ -188,8 +196,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     TextFormField(
                       controller: fullNameController,
                       decoration: inputStyle("Full Name"),
-                      validator: (v) =>
-                          v!.isEmpty ? "Full Name cannot be empty" : null,
+                      validator: (v) => v!.trim().isEmpty
+                          ? "Full Name cannot be empty"
+                          : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -220,9 +229,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                 ),
                               );
                             }).toList(),
-                            onChanged: (value) {
-                              setState(() => selectedCountryCode = value!);
-                            },
+                            onChanged: isSubmitting
+                                ? null
+                                : (value) {
+                                    setState(
+                                      () => selectedCountryCode = value!,
+                                    );
+                                  },
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -240,23 +253,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    DropdownButtonFormField<String>(
-                      value: selectedCity,
-                      decoration: inputStyle(
-                        batchState.status == BatchStatus.loading
-                            ? 'Loading Cities...' // dynamic label text
-                            : 'Choose your City',
-                      ),
-                      items: batchState.batches.map((batch) {
-                        return DropdownMenuItem<String>(
-                          value: batch.batchId,
-                          child: Text(batch.batchName),
-                        );
-                      }).toList(),
-                      onChanged: (value) =>
-                          setState(() => selectedCity = value),
+                    // Address field
+                    TextFormField(
+                      controller: addressController,
+                      decoration: inputStyle("Address"),
                       validator: (v) =>
-                          v == null ? "Please select a city" : null,
+                          v!.trim().isEmpty ? "Address cannot be empty" : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -321,7 +323,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: handleSignup,
+                        onPressed:
+                            (isSubmitting ||
+                                authState.status == AuthStatus.loading)
+                            ? null
+                            : handleSignup,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0B7A32),
                           shape: RoundedRectangleBorder(
@@ -329,7 +335,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
                           elevation: 4,
                         ),
-                        child: authState.status == AuthStatus.loading
+                        child:
+                            (isSubmitting ||
+                                authState.status == AuthStatus.loading)
                             ? const CircularProgressIndicator(
                                 color: Colors.white,
                               )
@@ -347,10 +355,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     const SizedBox(height: 14),
 
                     TextButton(
-                      onPressed: () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                      ),
+                      onPressed: isSubmitting
+                          ? null
+                          : () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LoginPage(),
+                              ),
+                            ),
                       child: const Text(
                         "Already have an account? Login",
                         style: TextStyle(color: Colors.green),

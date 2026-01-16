@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:krishipal/core/error/failures.dart';
 
-// has usecase in items,domaina and so on..
 abstract interface class UsecaseWithParams<SuccessType, Params> {
   Future<Either<Failure, SuccessType>> call(Params params);
 }
@@ -9,14 +8,3 @@ abstract interface class UsecaseWithParams<SuccessType, Params> {
 abstract interface class UsecaseWithoutParams<SuccessType> {
   Future<Either<Failure, SuccessType>> call();
 }
-
-
-
-
-// abstract interface class UsecaseWithParams<SuccessType, Params> {
-//   Future<Either<Failure, SuccessType>> call(Params params);
-// }
-
-// abstract interface class UsecaseWithoutParams<SuccessType> {
-//   Future<Either<Failure, SuccessType>> call();
-// }

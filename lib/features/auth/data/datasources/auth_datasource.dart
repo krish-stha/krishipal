@@ -1,11 +1,10 @@
+// features/auth/data/datasources/auth_datasource.dart
 import 'package:krishipal/features/auth/data/models/auth_hive_model.dart';
 
 abstract interface class IAuthDatasource {
-  Future<bool> register(AuthHiveModel model);
   Future<AuthHiveModel?> login(String email, String password);
+  Future<AuthHiveModel> signup(AuthHiveModel user);
+  Future<void> logout();
   Future<AuthHiveModel?> getCurrentUser();
-  Future<bool> logout();
-
-  //get email exists
-  Future<bool> isEmailExists(String email);
+  Future<bool> isUserLoggedIn();
 }

@@ -1,3 +1,4 @@
+// features/auth/presentation/state/auth_state.dart
 import 'package:equatable/equatable.dart';
 import 'package:krishipal/features/auth/domain/entities/auth_entity.dart';
 
